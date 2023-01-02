@@ -10,7 +10,7 @@ class DBUpdater:
     def __init__(self):
         """생성자: MariaDB 연결 및 종목코드 딕셔너리 생성"""
         self.conn = pymysql.connect(host='localhost', user='root',
-            password='myPa$$word', db='INVESTAR', charset='utf8')
+            password='dusvlf77', db='INVESTAR', charset='utf8')
         
         with self.conn.cursor() as curs:
             sql = """
@@ -93,8 +93,8 @@ class DBUpdater:
             pages = min(int(lastpage), pages_to_fetch)
             for page in range(1, pages + 1):
                 pg_url = '{}&page={}'.format(url, page)
-                df = df.append(pd.read_html(requests.get(pg_url,
-                    headers={'User-agent': 'Mozilla/5.0'}).text)[0])                                          
+                df = pd.concat([df, pd.read_html(requests.get(pg_url,
+                    headers={'User-agent': 'Mozilla/5.0'}).text)[0]])
                 tmnow = datetime.now().strftime('%Y-%m-%d %H:%M')
                 print('[{}] {} ({}) : {:04d}/{:04d} pages are downloading...'.
                     format(tmnow, company, code, page, pages), end="\r")
@@ -158,7 +158,7 @@ class DBUpdater:
             tmnext = tmnow.replace(day=tmnow.day+1, hour=17, minute=0,
                 second=0)   
         tmdiff = tmnext - tmnow
-        secs = tmdiff.seconds
+        secs = tmdiff.seconcds
         t = Timer(secs, self.execute_daily)
         print("Waiting for next update ({}) ... ".format(tmnext.strftime
             ('%Y-%m-%d %H:%M')))

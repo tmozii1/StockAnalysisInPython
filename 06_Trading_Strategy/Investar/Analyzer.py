@@ -4,6 +4,9 @@ from datetime import datetime
 from datetime import timedelta
 import re
 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 class MarketDB:
     def __init__(self):
         """생성자: MariaDB 연결 및 종목코드 딕셔너리 생성"""
@@ -22,6 +25,12 @@ class MarketDB:
         krx = pd.read_sql(sql, self.conn)
         for idx in range(len(krx)):
             self.codes[krx['code'].values[idx]] = krx['company'].values[idx]
+            
+    def get_daily_price_years(self, code, years=1):
+        startdate = datetime.now() - relativedelta(years=years)
+        print(startdate)
+
+        return self.get_daily_price(code, start_date=startdate.strftime('%Y-%m-%d'))
 
     def get_daily_price(self, code, start_date=None, end_date=None):
         """KRX 종목의 일별 시세를 데이터프레임 형태로 반환
